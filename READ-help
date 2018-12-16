@@ -1,0 +1,41 @@
+project
+    web
+    devtools
+    actu
+    config-client
+    
+    @Autowired
+    Environment myEnv => to find port service is running on
+    
+    To start another instance on different port
+        Run configurations
+        VMArguments => -Dserver.port=xxxx
+    
+    MongoDB addition
+        include mongo starter in pom.xml
+        
+        add host port and dbname in application.properties
+        
+        create Model with @Id Long id; => this is ur custom id overwriting mongo id
+        create Repo implements MongoRepository<Model, Long>
+        create control
+        @Autowire Repo
+        @RequestMapping(value = "/createData", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+        public void create(@RequestBody ExchangeValue evData)
+        
+        postman => http://localhost:8181/createData
+        return evRepo.save(evData)
+        
+        raw data as json
+          {
+            "id":1001,
+            "from":"USD",
+            "to":"INR",
+            "conversionMultiple":75
+          }
+          
+         when executing the above command it will create DB, collection and insert the value
+         
+         browse => @Get http://localhost:8181/currency-exchange/from/EUR/to/INR
+         in repo interface => public ExchangeValue findByFromAndTo(String from, String to);
+         in controller => ExchangeValue ev = evRepo.findByFromAndTo(from, to); return ev (result is json from table)
